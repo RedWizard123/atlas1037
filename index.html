@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" id="viewport">
+    <title>atlas1037</title>
+    <style type="text/css">
+      @keyframes fire-blink {
+        0% { transform: scale(1); }
+        25% { transform: scale(1.2); }
+        50% { transform: scale(1); }
+        75% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+      @keyframes monster-shake {
+        0% { transform: rotate(-3deg); }
+        25% { transform: rotate(3deg); }
+        50% { transform: rotate(-3deg); }
+        75% { transform: rotate(3deg); }
+        100% { transform: rotate(-3deg); }
+      }
+      .loading {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        transform: translateY(-100%);
+        background: url("static/img/bg.jpg");
+        background-size: cover;
+        /* transition: transform 0.5s; */
+      }
+      .loading-reset {
+        transform: translateY(-100%);
+        transition: transform 0.5s;
+      }
+      .master {
+        width: 33%;
+        margin: 0 auto;
+        position: relative;
+      }
+      .master > div > img {
+        margin-top: 9.5rem;
+        width: 100%;
+      }
+      .master > div{
+        width: 100%;
+        animation-name: monster-shake;
+        animation-duration: 2s;
+        animation-iteration-count: 10000;
+        transform-origin: 50% 100%;
+      }
+      .fire > img {
+        left: -1rem;
+        top:0;
+        margin-top: 12rem;
+        position: absolute;
+        width: 3rem;
+        animation-name: fire-blink;
+        animation-duration: 4s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: 100000;
+      }
+      html, body{
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: url("static/img/bg.jpg");
+        background-size: cover;
+      }
+      .loading h1 {
+        text-align: center;
+      }
+      #app {
+        height: 100%;
+        transform: translateY(0);
+      }
+      #app.app-reset {
+        transform: translateY(0);
+        transition: transform 0.5s;
+      }
+      /* F1ABAD */
+    </style>
+  </head>
+  <body>
+    <div class="loading" id="loading">
+      <div class="master">
+        <div>
+          <img src="static/img/master.png">
+          <div class="fire">
+            <img src="static/img/fire.png">
+          </div>
+        </div>
+        <h1 id="progress"></h1>
+      </div>
+    </div>
+    <script>
+    if (window.location.href.split('#')[1] === '/' || window.location.href.indexOf('#') === -1) {
+      (function () {
+        document.getElementById('loading').style.transform = 'translateY(0)';
+        var imagesToLoad = [
+          'static/img/master.png',
+          'static/img/1037.png',
+          'static/img/leadin-text.png',
+          'static/img/bottom-flowers.png',
+          'static/img/boy.png',
+          'static/img/girl.png',
+          'static/img/boy-tip.png',
+          'static/img/girl-tip.png',
+        ];
+        var loadedCount = 0;
+        var initTime = Date.now();
+        var h1 = document.getElementById('progress');
+        var timer;
+        document.documentElement.style.overflow = 'hidden';
+        function LoadingComplete () {
+          loadedCount ++;
+          h1.innerHTML = Math.round(loadedCount / (imagesToLoad.length + 2) * 100) + '%'
+          if (loadedCount >= imagesToLoad.length) {
+            timer = setInterval(function () {
+              if (window.vueLoaded && window.vueLoaded === true) {
+                document.getElementById('app').style.transform = 'translateY(100%)';
+                document.getElementById('app').style.opacity = '1';
+                h1.innerHTML = '100%';
+                if (Date.now() - initTime > 2000) {
+                  setTimeout(ready, 0);
+                }
+              }
+            }, 100);
+          }
+        }
+        function ready() {
+          document.documentElement.style.overflow = 'auto';
+          document.getElementById('loading').style.transform = '';
+          document.getElementById('app').style.transform = '';
+          document.getElementById('loading').classList.add('loading-reset');
+          document.getElementById('app').classList.add('app-reset');
+          clearInterval(timer);
+          setTimeout(function () {
+            // document.body.removeChild(document.getElementById('loading'));
+            window.needToLoadVue = true;
+          }, 600);
+        }
+        imagesToLoad.forEach(function (src) {
+          var img = new Image();
+          img.src = src;
+          img.onload = function () {
+            LoadingComplete();
+          }
+        })
+      })();
+    }
+    </script>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
